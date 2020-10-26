@@ -1,5 +1,12 @@
+// User Model
+
+// Dependencies
+// use Model and Datatype from sequelize
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/connection');
+// use bcrypt for password hashing
+const bcrypt = require('bcrypt');
+const { use } = require('../routes');
 
 // create the User model
 class User extends Model {}
@@ -38,7 +45,7 @@ User.init(
         validate: {
             // this will check the format of the entry as a valid email by pattern checking <string>@<string>.<string>
             isEmail: true
-        }
+            }
         },
         // define a password column
         password: {
@@ -49,12 +56,25 @@ User.init(
         validate: {
             // this means the password must be at least four characters long
             len: [4]
-        }
+            }
         }
   },
   {
     // TABLE CONFIGURATION OPTIONS (https://sequelize.org/v5/manual/models-definition.html#configuration))
-
+    // add hooks for the password hashing operation
+    hooks: {
+        // set up a beforeCreate lifecycle hook to hash the password before the object is created in the database
+        // and return the new userdata object
+        async beforeCreate(newUserData) {
+            newUserData.password = await bcrypt.hash(newUserData.password, 10);
+            return newUserData;
+          },
+        // set up a beforeUpdate lifecycle hook to hash the password before a user object is updated in the database
+        async beforeUpdate(updatedUserData) {
+            updatedUserData.password = await bcrypt.hash(updatedUserData.password, 10);
+            return updatedUserData;
+          }
+    },
     // pass in the imported sequelize connection to the database
     sequelize,
     // do not automatically create createdAt/updatedAt timestamp fields

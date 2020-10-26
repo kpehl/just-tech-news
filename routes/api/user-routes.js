@@ -73,11 +73,15 @@ router.put('/:id', (req, res) => {
     // expects {username: 'Lernantino', email: 'lernantino@gmail.com', password: 'password1234'}
   
     // if req.body has exact key/value pairs to match the model, 
-    // you can just use `req.body` instead of calling out each property
+    // you can just use `req.body` instead of calling out each property,
+    // allowing for updating only key/value pairs that are passed through
     User.update(req.body, {
-      where: {
-        id: req.params.id
-      }
+        // since there is a hook to hash only the password, the option is noted here
+        individualHooks: true,
+        // use the id as the parameter for the individual user to be updated
+        where: {
+            id: req.params.id
+        }
     })
       .then(dbUserData => {
         if (!dbUserData[0]) {
