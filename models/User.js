@@ -9,7 +9,13 @@ const bcrypt = require('bcrypt');
 const { use } = require('../routes');
 
 // create the User model
-class User extends Model {}
+class User extends Model {
+    // set up a method to run on a user instance to check the password as provided 
+    // in the login route against the hashed database password
+    checkPassword(loginPw) {
+        return bcrypt.compareSync(loginPw, this.password);
+    }
+}
 
 // define the table columns and configuration
 User.init(
