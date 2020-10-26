@@ -6,7 +6,6 @@ const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/connection');
 // use bcrypt for password hashing
 const bcrypt = require('bcrypt');
-const { use } = require('../routes');
 
 // create the User model
 class User extends Model {
