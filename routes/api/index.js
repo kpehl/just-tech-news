@@ -4,10 +4,13 @@
 // Server connection
 const router = require('express').Router();
 // User Routes
-const userRoutes = require('./user-routes.js');
+const userRoutes = require('./user-routes');
+// Post Routes
+const postRoutes = require('./post-routes');
 
-// Define routes for the router to use
+// Define route path for the API to use, e.g. api/users/
 router.use('/users', userRoutes);
+router.use('/posts', postRoutes);
 
 // Export the router
 module.exports = router;

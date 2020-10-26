@@ -3,8 +3,8 @@
 // Dependencies
 // Express.js server
 const express = require('express');
-// All routes as defined and exported in the routes folder
-const routes = require('./routes');
+// All routes as defined and exported in the index.js file in the routes folder
+const routes = require('./routes/index');
 // Sequelize connection to the database
 const sequelize = require('./config/connection');
 
