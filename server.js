@@ -23,6 +23,6 @@ app.use(routes);
 // Turn on connection to db and then to the server
 // force: true to reset the database and clear all values, updating any new relationships
 // force: false to maintain data - aka normal operation
-sequelize.sync({ force: false }).then(() => {
+sequelize.sync({ force: true }).then(() => {
   app.listen(PORT, () => console.log('Now listening'));
 });
