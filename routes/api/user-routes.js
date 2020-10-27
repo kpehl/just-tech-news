@@ -2,7 +2,7 @@
 // Express.js connection
 const router = require('express').Router();
 // User model
-const { User } = require('../../models');
+const { User, Post, Vote } = require('../../models');
 
 // Routes
 
@@ -31,7 +31,20 @@ router.get('/:id', (req, res) => {
       where: {
         // use id as the parameter for the request
         id: req.params.id
-      }
+      },
+      // include the posts the user has created and the posts the user has upvoted
+      include: [
+        {
+          model: Post,
+          attributes: ['id', 'title', 'post_url', 'created_at']
+        },
+        {
+          model: Post,
+          attributes: ['title'],
+          through: Vote,
+          as: 'voted_posts'
+        }
+      ]
     })
       .then(dbUserData => {
         if (!dbUserData) {

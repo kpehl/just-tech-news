@@ -12,8 +12,14 @@ const sequelize = require('../../config/connection');
 router.get('/', (req, res) => {
     Post.findAll({
         // Query configuration
-        // From the Post table, include the post ID, URL, title, and the timestamp from post creation
-        attributes: ['id', 'post_url', 'title', 'created_at'],
+        // From the Post table, include the post ID, URL, title, and the timestamp from post creation, as well as total votes
+        attributes: [
+            'id',
+            'post_url',
+            'title',
+            'created_at',
+            [sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'), 'vote_count']
+          ],
         // Order the posts from most recent to least
         order: [[ 'created_at', 'DESC']],
         // From the User table, include the post creator's user name
@@ -41,7 +47,13 @@ router.get('/:id', (req, res) => {
         id: req.params.id
       },
       // Query configuration, as with the get all posts route
-      attributes: ['id', 'post_url', 'title', 'created_at'],
+      attributes: [
+        'id',
+        'post_url',
+        'title',
+        'created_at',
+        [sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'), 'vote_count']
+      ],
       include: [
         {
           model: User,
