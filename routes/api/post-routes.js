@@ -2,8 +2,9 @@
 // Express.js connection
 const router = require('express').Router();
 // User model and Post model
-const { User, Post } = require('../../models');
-const { route } = require('./user-routes');
+const { User, Post, Vote } = require('../../models');
+// Sequelize database connection
+const sequelize = require('../../config/connection');
 
 // Routes
 
@@ -76,6 +77,37 @@ router.post('/', (req, res) => {
         console.log(err);
         res.status(500).json(err);
     });
+});
+
+// PUT api/posts/upvote -- upvote a post (this route must be above the update route, otherwise express.js will treat upvote as an id)
+router.put('/upvote', (req, res) => {
+    // create an upvote with the user id of the voter and the post id of the upvoted post
+    Vote.create({
+        user_id: req.body.user_id,
+        post_id: req.body.post_id
+    })
+    // find the post just voted on and return the updated data for the post, including updated vote count
+    .then( () => {
+        return Post.findOne({
+            where: {
+                id: req.body.post_id
+            },
+            attributes: [
+                'id',
+                'post_url',
+                'title',
+                'created_at',
+                // use a raw MySQL query to get the vote count, because votes are in a separate table, so findAndCountAll() will not work
+                [
+                    sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'),
+                    'vote_count'
+                ]
+            ]
+        })
+    })
+    // return the data, or an error if one occurs
+    .then(dbPostData => res.json(dbPostData))
+    .catch(err => res.json(err))
 });
 
 // PUT api/posts/1-- update a post's title
