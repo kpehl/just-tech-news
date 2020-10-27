@@ -1,7 +1,7 @@
 // Dependencies
 // Express.js connection
 const router = require('express').Router();
-// User model
+// User, Post, Vote models
 const { User, Post, Vote } = require('../../models');
 
 // Routes
