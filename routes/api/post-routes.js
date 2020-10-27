@@ -2,7 +2,7 @@
 // Express.js connection
 const router = require('express').Router();
 // User model and Post model
-const { User, Post, Vote } = require('../../models');
+const { User, Post, Vote, Comment } = require('../../models');
 // Sequelize database connection
 const sequelize = require('../../config/connection');
 
@@ -23,10 +23,19 @@ router.get('/', (req, res) => {
         // Order the posts from most recent to least
         order: [[ 'created_at', 'DESC']],
         // From the User table, include the post creator's user name
+        // From the Comment table, include all comments
         include: [
             {
                 model: User,
                 attributes: ['username']
+            },
+            {
+                model: Comment,
+                attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+                include: {
+                    model: User,
+                    attributes: ['username']
+                }
             }
         ]
     })
@@ -58,6 +67,14 @@ router.get('/:id', (req, res) => {
         {
           model: User,
           attributes: ['username']
+        },
+        {
+            model: Comment,
+            attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+            include: {
+                model: User,
+                attributes: ['username']
+            }
         }
       ]
     })

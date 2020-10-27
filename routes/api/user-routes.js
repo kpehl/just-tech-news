@@ -2,7 +2,7 @@
 // Express.js connection
 const router = require('express').Router();
 // User, Post, Vote models
-const { User, Post, Vote } = require('../../models');
+const { User, Post, Vote, Comment } = require('../../models');
 
 // Routes
 
@@ -32,11 +32,19 @@ router.get('/:id', (req, res) => {
         // use id as the parameter for the request
         id: req.params.id
       },
-      // include the posts the user has created and the posts the user has upvoted
+      // include the posts the user has created, the posts the user has commented on, and the posts the user has upvoted
       include: [
         {
           model: Post,
           attributes: ['id', 'title', 'post_url', 'created_at']
+        },
+        {
+            model: Comment,
+            attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+            include: {
+                model: Post,
+                attributes: ['title']
+            }
         },
         {
           model: Post,
