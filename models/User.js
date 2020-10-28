@@ -36,7 +36,10 @@ User.init(
         // define the data type
         type: DataTypes.STRING,
         // require the data to be entered
-        allowNull: false
+        allowNull: false,
+        validate: {
+          notEmpty: true,
+        }
         },
         // define an email column
         email: {
