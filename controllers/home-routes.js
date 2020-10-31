@@ -8,6 +8,9 @@ const { Post, User, Comment } = require('../models')
 
 // Route to get the homepage and render all the posts
 router.get('/', (req, res) => {
+    // console log the session information
+    console.log(req.session)
+    // get the posts from the database
     Post.findAll({
         attributes: [
           'id',
@@ -45,6 +48,12 @@ router.get('/', (req, res) => {
 
 // Route to render the login page
 router.get('/login', (req, res) => {
+    // if a session is already detected, reroute to the homepage
+    if (req.session.loggedIn) {
+        res.redirect('/');
+        return;
+      }
+    // otherwise, render the login page
     res.render('login');
 });
 
