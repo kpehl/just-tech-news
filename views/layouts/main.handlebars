@@ -8,16 +8,23 @@
   <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
 
+
 <body>
   <div class="wrapper">
+    <!--header section with link to log in-->
     <header>
-      <h1>
-        <a href="/">Just Tech News</a>
-      </h1>
+        <h1>
+            <a href="/">Just Tech News</a>
+        </h1>
+        <nav>
+            <a href="/login">login</a>
+        </nav>
     </header>
+    <!--main section where posts will be populated by handlebars and the database-->
     <main>
       {{{ body }}}
     </main>
+    <!--footer section-->
     <footer>
       Thanks for visiting!
     </footer>
