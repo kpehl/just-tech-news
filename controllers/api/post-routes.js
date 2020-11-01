@@ -110,12 +110,23 @@ router.post('/', (req, res) => {
 
 // PUT api/posts/upvote -- upvote a post (this route must be above the update route, otherwise express.js will treat upvote as an id)
 router.put('/upvote', (req, res) => {
-    // use the model method in Post.js to create an upvote and return the data for the post voted on, including updated vote count
-    Post.upvote(req.body, { Vote })
-    // return the data (lines changed), or an error if one occurs
-    .then(dbPostData => res.json(dbPostData))
-    .catch(err => res.json(err))
-});
+  // make sure that a session exists, i.e. that a user is logged in
+  if (req.session) {
+    // pass the session user id along with the req.body properties (destructured) to the model method created in Post.js for upvotes
+    Post.upvote({ ...req.body, user_id: req.session.user_id }, { Vote, Comment, User })
+    // return the data (lines changed)
+    .then(updatedVoteData => res.json(updatedVoteData))
+    // or an error if one occurs
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+  }
+  // if a user is not logged in, send a bad request error
+  else {
+    res.status(400)
+  }
+}); 
 
 // PUT api/posts/1-- update a post's title
 router.put('/:id', (req, res) => {
