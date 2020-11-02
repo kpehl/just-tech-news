@@ -3,6 +3,11 @@
 const router = require('express').Router();
 // User, Post, Vote models
 const { User, Post, Vote, Comment } = require('../../models');
+// Express Session for the session data
+const session = require('express-session');
+const withAuth = require('../../utils/auth');
+// Sequelize store to save the session so the user can remain logged in
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 // Routes
 
@@ -79,8 +84,16 @@ router.post('/', (req, res) => {
     email: req.body.email,
     password: req.body.password
   })
-    // send the user data back to the client as confirmation
-    .then(dbUserData => res.json(dbUserData))
+    // send the user data back to the client as confirmation and save the session
+    .then(dbUserData => {
+      req.session.save(() => {
+        req.session.user_id = dbUserData.id;
+        req.session.username = dbUserData.username;
+        req.session.loggedIn = true;
+    
+        res.json(dbUserData);
+      });
+    })
     // if there is a server error, return that error
     .catch(err => {
       console.log(err);
@@ -110,13 +123,34 @@ router.post('/login', (req, res) => {
             res.status(400).json({ message: 'Incorrect password!' });
             return;
         }
-        // otherwise return the user object and a success message
-        res.json({ user: dbUserData, message: 'You are now logged in!' })
+        // otherwise, save the session, and return the user object and a success message
+        req.session.save(() => {
+          // declare session variables
+          req.session.user_id = dbUserData.id;
+          req.session.username = dbUserData.username;
+          req.session.loggedIn = true;
+    
+          res.json({ user: dbUserData, message: 'You are now logged in!' });
+        });
     });  
 });
 
+// POST /api/users/logout -- log out an existing user
+router.post('/logout', withAuth, (req, res) => {
+  if (req.session.loggedIn) {
+    req.session.destroy(() => {
+      // 204 status is that a request has succeeded, but client does not need to go to a different page
+        // (200 indicates success and that a newly updated page should be loaded, 201 is for a resource being created)
+      res.status(204).end();
+    });
+  } else {
+    // if there is no session, then the logout request will send back a no resource found status
+    res.status(404).end();
+  }
+})
+
 // PUT /api/users/1 -- update an existing user
-router.put('/:id', (req, res) => {
+router.put('/:id', withAuth, (req, res) => {
     // update method
     // expects {username: 'Lernantino', email: 'lernantino@gmail.com', password: 'password1234'}
   
@@ -145,7 +179,7 @@ router.put('/:id', (req, res) => {
   })
 
 // DELETE /api/users/1 -- delete an existing user
-router.delete('/:id', (req, res) => {
+router.delete('/:id', withAuth, (req, res) => {
     // destroy method
     User.destroy({
       where: {
