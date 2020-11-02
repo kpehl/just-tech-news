@@ -11,13 +11,12 @@ This application creates the database and back-end structure for a news aggregat
 * MySQL
 * Sequelize (npm package for integrating MySQL and Node.js)
 * bcrypt (npm package for password hashing)
+* handlebars (npm package for a template engine used for html and javascript integration on the front-end)
 * Heroku
 
 ## Usage
 The application is deployed on Heroku at https://quiet-thicket-58359.herokuapp.com/
 
-There is currently no front end, so the browser can only be used to access API endpoints.  For instance, to view all the users in the database, enter https://quiet-thicket-58359.herokuapp.com/api/users
+Visit the website on Heroku.  You can view posts and visit links as a visitor, create your own account, and as an authenticated user you can comment on and upvote other posts as well as adding your own.  You can edit titles of your own posts and delete posts as well.  
 
-Alternatively, use the application of your choice, such as Insomnia Core or Postman to access the API endpoints.  With an application, you can test out adding, updating, and deleting users; logging in as a user; adding, updating, and deleting posts; adding an upvote to a post; adding and deleting a comment; getting information on all users; getting information on a single user; getting all posts; getting a single post; and getting all comments.
-
-For sample data and API endpoint URLs, see [sample data](sample_data.md)
+Warning: New data is stored on Heroku for an indeterminate period of time.  At least once a day the dynos will be restarted and any new data included new users will be wiped out.  
