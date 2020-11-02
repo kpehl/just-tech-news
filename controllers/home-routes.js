@@ -9,7 +9,7 @@ const { Post, User, Comment } = require('../models')
 // Route to get the homepage and render all the posts
 router.get('/', (req, res) => {
     // console log the session information
-    console.log(req.session)
+    // console.log(req.session)
     // get the posts from the database
     Post.findAll({
         attributes: [

@@ -26,7 +26,7 @@ const hbs = exphbs.create({ helpers });
 // Initialize session with options per best practices.  
 //The secret is defined in the .env file so it is kept secure, along with the mysql login information used in config/connection
 const sess = {
-  secret: process.env.SESSION_SECRET,
+  secret: 'Super secret secret',
   cookie: {},
   resave: false,
   saveUninitialized: true,
