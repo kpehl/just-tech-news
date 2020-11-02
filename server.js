@@ -17,9 +17,11 @@ const exphbs = require('express-handlebars');
 const session = require('express-session')
 // Sequelize store to save the session so the user can remain logged in
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
+// Handlebars helpers
+const helpers = require('./utils/helpers');
 
-// Initialize handlebars for the html templates
-const hbs = exphbs.create({});
+// Initialize handlebars for the html templates, using the custom helpers
+const hbs = exphbs.create({ helpers });
 
 // Initialize session with options per best practices.  
 //The secret is defined in the .env file so it is kept secure, along with the mysql login information used in config/connection
