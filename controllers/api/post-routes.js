@@ -5,6 +5,8 @@ const router = require('express').Router();
 const { User, Post, Vote, Comment } = require('../../models');
 // Sequelize database connection
 const sequelize = require('../../config/connection');
+// the authorization middleware to redirect unauthenticated users to the login page
+const withAuth = require('../../utils/auth');
 
 // Routes
 
@@ -94,7 +96,7 @@ router.get('/:id', (req, res) => {
   });
 
 // POST api/posts -- create a new post
-router.post('/', (req, res) => {
+router.post('/', withAuth, (req, res) => {
     // expects object of the form {title: 'Sample Title Here', post_url: 'http://somestring.someotherstring', user_id: 1}
     Post.create({
         title: req.body.title,
@@ -109,7 +111,7 @@ router.post('/', (req, res) => {
 });
 
 // PUT api/posts/upvote -- upvote a post (this route must be above the update route, otherwise express.js will treat upvote as an id)
-router.put('/upvote', (req, res) => {
+router.put('/upvote', withAuth, (req, res) => {
   // make sure that a session exists, i.e. that a user is logged in
   if (req.session) {
     // pass the session user id along with the req.body properties (destructured) to the model method created in Post.js for upvotes
@@ -129,7 +131,7 @@ router.put('/upvote', (req, res) => {
 }); 
 
 // PUT api/posts/1-- update a post's title
-router.put('/:id', (req, res) => {
+router.put('/:id', withAuth, (req, res) => {
     Post.update(
         {
             title: req.body.title
@@ -154,7 +156,7 @@ router.put('/:id', (req, res) => {
 });
 
 // DELETE api/posts/1 -- delete a post
-router.delete('/:id', (req, res) => {
+router.delete('/:id', withAuth, (req, res) => {
     Post.destroy({
       where: {
         id: req.params.id

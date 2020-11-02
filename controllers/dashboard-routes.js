@@ -1,9 +1,14 @@
+// Dependencies
+// the router and the database
 const router = require('express').Router();
 const sequelize = require('../config/connection');
+// the models
 const { Post, User, Comment } = require('../models');
+// the authorization middleware to redirect unauthenticated users to the login page
+const withAuth = require('../utils/auth')
 
 // A route to render the dashboard page, only for a logged in user
-router.get('/', (req, res) => {
+router.get('/', withAuth, (req, res) => {
     // All of the users posts are obtained from the database
     Post.findAll({
       where: {
